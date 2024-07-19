@@ -3,6 +3,11 @@
 - `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
 - `pm.response` - Ответ сервера
 - `console.log(reqData)` - отобразить в консоле значение переменной reqData
+- `JSON.parse(pm.request.body)` - `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json
+- `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON
+- `pm.request.body.formdata` - получить данные в формате formdata
+- `pm.request.body.toJSON` - получить данные в формате JSON
+
 
 # Snippets
 ## Status code: Code is 200
