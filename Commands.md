@@ -2,6 +2,7 @@
 - `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. у `var` функциональную область видимости, у `let` блочная область видимости
 - `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
 - `pm.response` - Ответ сервера
+- `pm.response.json()` - Ответ сервера в виде json, наиболее часто используемая форма 
 - `pm.response.text()` - ответ сервера в виде текста 
 - `console.log(reqData)` - отобразить в консоле значение переменной reqData
 - `JSON.parse(pm.request.body)` - `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`
@@ -13,6 +14,10 @@
 - `pm.request.url.query.toObject()` - получить url запроса
 - `+reqData.age` - знак `+` означает превратить текстовые данные в числовые 
 - `to.include()` - проверка параметра
+- `respSalary[0]` - достать первый элемент из массива `respSalary`
+- ` pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
+- `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")`
+- `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")`
 
 
 `request.data --> pm.request.body`
@@ -105,3 +110,25 @@ pm.test("Body is correct", function () {
 ```
 Проверка наличия в тексте ответа строки "response_body_string"
 
+
+```js
+// Проверить, что в ответе сервера есть тип данных строка 
+pm.test("Check type of data", function () {
+    pm.expect(respName.name).to.be.a("String");
+});
+```
+
+
+```js
+// Проверить, что все данные есть в ответе сервера
+pm.test("Check all data are in response", function () {
+    pm.expect(resData).to.have.all.keys("age", "daily_food", "daily_sleep", "name");
+});
+```
+
+```js
+// Проверить, что хотя бы какие-либо данные есть в ответе сервера
+pm.test("Check all data are in response", function () {
+    pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name");
+});
+```
