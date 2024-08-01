@@ -1,21 +1,31 @@
 ## Синтаксис JS
 - `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. у `var` функциональную область видимости, у `let` блочная область видимости
 - `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
+- `console.log(reqData)` - отобразить в консоле значение переменной reqData
+- `+reqData.age` - знак `+` означает превратить текстовые данные в числовые 
+- `let name = 'Ivan'` - присвоить `name` строку `'Ivan'`
+- `let salary = 1000` - присвоить `salary` число `1000`
+- `to.include()` - проверка параметра
+
+### Получить ответ
 - `pm.response` - Ответ сервера
 - `pm.response.json()` - Ответ сервера в виде json, наиболее часто используемая форма 
 - `pm.response.text()` - ответ сервера в виде текста 
-- `console.log(reqData)` - отобразить в консоле значение переменной reqData
-- `JSON.parse(pm.request.body)` - `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`
+- `respSalary[0]` - достать первый элемент из массива `respSalary`
+
+### Получить запрос
+- `JSON.parse(pm.request.body)` - `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
 - `JSON.parse(request.data)` - 
 - `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста
-- `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON
+- `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
+- `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны
 - `pm.request.body.formdata` - получить данные в формате formdata
-- `pm.request.body.toJSON` - получить данные в формате JSON
+- `pm.request.body.toJSON` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
+- `pm.request.body.raw`
+- `pm.request.url.toString()` - получить url в виде строки
 - `pm.request.url.query.toObject()` - получить url запроса
-- `+reqData.age` - знак `+` означает превратить текстовые данные в числовые 
-- `to.include()` - проверка параметра
-- `respSalary[0]` - достать первый элемент из массива `respSalary`
-- ` pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
+
+- `pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
 - `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")`
 - `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")`
 
