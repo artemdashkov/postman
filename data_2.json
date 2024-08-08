@@ -1,0 +1,23 @@
+[
+
+	{
+		"e-mail":"test_01@test.df",
+		"password":"123"
+	},
+	
+	{
+		"e-mail":"test_02@test.df",
+		"password":"234"
+	},
+	
+	{
+		"e-mail":"test_03@test.df",
+		"password":"345"
+	},
+	
+	{
+		"e-mail":"eve.holt@reqres.in",
+		"password":"pistol"
+	}
+
+]

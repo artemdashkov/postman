@@ -1,6 +1,7 @@
 # Содержание
 - [Теория](#Теория)
 - [Методы](#Методы)
+- [SOAP API](#SOAP-API)
 - [Вкладки Postman](#Вкладки-Postman)
 - [Environment](#Environment)
 - [Run Collection](#Run-Collection)
@@ -12,11 +13,14 @@
 - endpoint - функция, которая обрабатывает запрос
 
 # Методы
-- GET
-- POST - отправляет информацию на сервер, например картинку.
-- PUT
-- DELETE
-- PATCH
+- GET - retrieves data from an API.
+- POST - sends new data to an API. отправляет информацию на сервер, например картинку.
+- PUT - replace existing data.
+- DELETE - delete existing data.
+- PATCH - update some existing data fields
+
+# SOAP API
+
 
 # Вкладки Postman
 - Params - можно указывать ключи-значения, чаще всего используется в методе GET
@@ -33,14 +37,19 @@
 - APIs - используется для создания документации внутри Postman
 
 # Environment
+is a set of variables that you can reuse in your requests and share with your team. You can reference them in request authentication, query and path parameters, request bodies, and scripts.
 набор переменных, которые мы используем для того или иного окружения. как правило команды работают в разных средах, например:
 - dev - окружение, которым могут пользоваться разработчики
 - stage - стабильная версия, после того как будут пофикшены все найденные баги окружение будет перемещено в prod
 - prod - там где работает наш заказчик
 
-### Типы окружений:
-- Globals - созданные переменные "Globals" будут применяться абсолютно ко всему проекту
-- для пользовательского окружения - будет работать, только если его принудительно выбрать для коллекции
+### Области действий переменных:
+- `Global` - созданные переменные "Globals" будут применяться абсолютно ко всему проекту
+- `Collection` - 
+- `Environment` - 
+- `Data` - 
+- `Local` - 
+
 - Variable 
     - INITIAL VALUE - может быть расшарена с другими пользователями и храниться на серверах Postman. Не рекомендуется сохранять чувствительную информацию.
     - CURRENT VALUE - доступна только локально
@@ -59,9 +68,17 @@
 
 ### Получить ответ
 - `pm.response` - Ответ сервера
-- `pm.response.json()` - Ответ сервера в виде json, наиболее часто используемая форма 
+- `const responseJson = pm.response.json()` - спарсить JSON данные
+- `const responseJson = xml2Json(pm.response.text());` - спарсить XML данные
 - `pm.response.text()` - ответ сервера в виде текста 
 - `respSalary[0]` - достать первый элемент из массива `respSalary`
+
+### Log statements
+- console.log()
+- console.info()
+- console.warn()
+- console.error()
+- console.clear()
 
 ### Получить запрос
 - `JSON.parse(pm.request.body)` - `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
