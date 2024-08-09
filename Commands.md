@@ -59,22 +59,77 @@ is a set of variables that you can reuse in your requests and share with your te
 
 # Синтаксис JS
 - `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. у `var` функциональную область видимости, у `let` блочная область видимости
-- `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
-- `console.log(reqData)` - отобразить в консоле значение переменной reqData
 - `+reqData.age` - знак `+` означает превратить текстовые данные в числовые 
 - `let name = 'Ivan'` - присвоить `name` строку `'Ivan'`
 - `let salary = 1000` - присвоить `salary` число `1000`
 - `to.include()` - проверка параметра
 
-### Получить ответ
-- `pm.response` - Ответ сервера
+### pm.test
+- `pm.test` - Define tests using the pm.test function, providing a name and function that returns a boolean (true or false) value indicating if the test passed or failed.
+- `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
+
+### pm.response
+- `pm.response` - Ответ сервера, 
+- `const responseJson = pm.response.json();` - To parse JSON data
+- `const responseJson = xml2Json(pm.response.text());` - To parse XML
+- `pm.response.to.have.status(200)`
+- To parse CSV, use the CSV parse (csv-parse/lib/sync) utility
+```js
+const parse = require('csv-parse/lib/sync');
+const responseJson = parse(pm.response.text());
+```
+- To parse HTML, use cheerio
+```js
+const $ = cheerio.load(pm.response.text());
+//output the html for testing
+console.log($.html());
+```
+
+```js
+pm.test("response should be okay to process", function () {
+    pm.response.to.not.be.error;
+    pm.response.to.have.jsonBody("");
+    pm.response.to.not.have.jsonBody("error");
+});
+```
+```js
+pm.test("response must be valid and have a body", function () {
+     pm.response.to.be.ok;
+     pm.response.to.be.withBody;
+     pm.response.to.be.json;
+});
+```
+
+### pm.expect
+- Using the `pm.expect` syntax gives your test result messages a different format. 
+- 
+```js
+pm.test("environment to be production", function () {
+    pm.expect(pm.environment.get("env")).to.equal("production");
+});
+```
+```js
+pm.test("The response has all properties", () => {
+    //parse the response JSON and test three properties
+    const responseJson = pm.response.json();
+    pm.expect(responseJson.type).to.eql('vip');
+    pm.expect(responseJson.name).to.be.a('string');
+    pm.expect(responseJson.id).to.have.lengthOf(1);
+});
+```
+
+- `pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
+- `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")`
+- `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")`
+
 - `const responseJson = pm.response.json()` - спарсить JSON данные
 - `const responseJson = xml2Json(pm.response.text());` - спарсить XML данные
 - `pm.response.text()` - ответ сервера в виде текста 
 - `respSalary[0]` - достать первый элемент из массива `respSalary`
 
-### Log statements
-- console.log()
+### console
+- `console.log()`
+- `console.log(reqData)` - отобразить в консоле значение переменной reqData
 - console.info()
 - console.warn()
 - console.error()
@@ -87,17 +142,17 @@ is a set of variables that you can reuse in your requests and share with your te
 - `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
 - `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны
 - `pm.request.body.formdata` - получить данные в формате formdata
-- `pm.request.body.toJSON` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
+- `pm.request.body.json()` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
 - `pm.request.body.raw`
 - `pm.request.url.toString()` - получить url в виде строки
 - `pm.request.url.query.toObject()` - получить url запроса
 
-- `pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
-- `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")`
-- `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")`
+
 
 
 `request.data --> pm.request.body`
+
+
 
 # Snippets
 
