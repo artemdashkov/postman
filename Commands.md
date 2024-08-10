@@ -135,10 +135,22 @@ pm.test("The response has all properties", () => {
 - console.error()
 - console.clear()
 
-### Получить запрос
-- `JSON.parse(pm.request.body)` - `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
+### Получить запрос pm.request
+- `JSON.parse(pm.request.body.raw)` , где `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
+- `JSON.parse(JSON.stringify(pm.request.body.formdata))`
+```js
+The JSON.parse(JSON.stringify()) technique is used to create a deep copy of an object in JavaScript.
+The JSON.stringify() function converts JavaScript objects into JSON strings
+JSON.parse() - This converts the JSON string back into a JavaScript object.
+```
+- 
+```js
+const requestData = JSON.parse(JSON.stringify(pm.request.body.formdata))
+
+console.log(requestData[0])
+```
 - `JSON.parse(request.data)` - 
-- `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста
+- `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста. метод считается устраевшим, но работает
 - `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
 - `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны
 - `pm.request.body.formdata` - получить данные в формате formdata
@@ -146,6 +158,7 @@ pm.test("The response has all properties", () => {
 - `pm.request.body.raw`
 - `pm.request.url.toString()` - получить url в виде строки
 - `pm.request.url.query.toObject()` - получить url запроса
+- `pm.request.url.query.toObject().salary` - получить из GET Запроса значение salary
 
 
 
@@ -162,6 +175,8 @@ pm.test("The response has all properties", () => {
 pm.environment.get("variable_key");
 fromEnv = pm.environment.get("url"); // например
 ```
+
+pm.variables.get(""); // ENTER VALUE HERE
 
 ## Set an environment variable
 Установить значения в окружении
