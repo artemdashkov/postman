@@ -158,7 +158,7 @@ pm.test("TEST: Dog's name Luky", function () {
     pm.expect(respDogName).to.include("Luky");
 });
 
-12. Проверить, что параметр age имеет значение 4.
++ 12. Проверить, что параметр age имеет значение 4.
 let respData = pm.response.json()
 let respDogAge = +respData.family.pets.dog.age
 

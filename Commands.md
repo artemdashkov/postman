@@ -54,6 +54,10 @@ is a set of variables that you can reuse in your requests and share with your te
     - INITIAL VALUE - может быть расшарена с другими пользователями и храниться на серверах Postman. Не рекомендуется сохранять чувствительную информацию.
     - CURRENT VALUE - доступна только локально
 
+- `pm.globals.set("GlobalAge", 17)` - установка глобальных переменных
+- `pm.environment.set("variable_key", "variable_value")` - Установить значения в окружении
+- `pm.environment.get("variable_key")` - Получить значение из окружения
+
 # Run Collection
 - `Persist responses for a session` - необходимо устанавливать чек, чтобы видеть 
 
@@ -63,16 +67,25 @@ is a set of variables that you can reuse in your requests and share with your te
 - `let name = 'Ivan'` - присвоить `name` строку `'Ivan'`
 - `let salary = 1000` - присвоить `salary` число `1000`
 - `to.include()` - проверка параметра
+- `respSalary[0]` - достать первый элемент из массива `respSalary`
 
-### pm.test
+## pm.test
 - `pm.test` - Define tests using the pm.test function, providing a name and function that returns a boolean (true or false) value indicating if the test passed or failed.
 - `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
 
-### pm.response
-- `pm.response` - Ответ сервера, 
-- `const responseJson = pm.response.json();` - To parse JSON data
-- `const responseJson = xml2Json(pm.response.text());` - To parse XML
+## pm.response
+- `pm.response` - Ответ сервера
+- `pm.response.json()` - To parse JSON data
+- `pm.response.text()` - ответ сервера в виде текста 
+- `xml2Json(pm.response.text());` - To parse XML
+- `pm.response.to.be.ok` 
+- `pm.response.to.be.withBody`
+- `pm.response.to.be.json`
+- `pm.response.to.have.jsonBody("")`
 - `pm.response.to.have.status(200)`
+- `pm.response.to.not.be.error`
+- `pm.response.to.not.have.jsonBody("error");`
+
 - To parse CSV, use the CSV parse (csv-parse/lib/sync) utility
 ```js
 const parse = require('csv-parse/lib/sync');
@@ -100,9 +113,11 @@ pm.test("response must be valid and have a body", function () {
 });
 ```
 
-### pm.expect
-- Using the `pm.expect` syntax gives your test result messages a different format. 
-- 
+## pm.expect
+- `pm.expect` syntax gives your test result messages a different format. 
+- `pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
+- `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")`
+- `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")`
 ```js
 pm.test("environment to be production", function () {
     pm.expect(pm.environment.get("env")).to.equal("production");
@@ -118,37 +133,20 @@ pm.test("The response has all properties", () => {
 });
 ```
 
-- `pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
-- `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")`
-- `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")`
-
-- `const responseJson = pm.response.json()` - спарсить JSON данные
-- `const responseJson = xml2Json(pm.response.text());` - спарсить XML данные
-- `pm.response.text()` - ответ сервера в виде текста 
-- `respSalary[0]` - достать первый элемент из массива `respSalary`
-
-### console
+## console
 - `console.log()`
 - `console.log(reqData)` - отобразить в консоле значение переменной reqData
-- console.info()
-- console.warn()
-- console.error()
-- console.clear()
+- `console.info()`
+- `console.warn()`
+- `console.error()`
+- `console.clear()`
 
-### Получить запрос pm.request
-- `JSON.parse(pm.request.body.raw)` , где `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
-- `JSON.parse(JSON.stringify(pm.request.body.formdata))`
-```js
-The JSON.parse(JSON.stringify()) technique is used to create a deep copy of an object in JavaScript.
-The JSON.stringify() function converts JavaScript objects into JSON strings
-JSON.parse() - This converts the JSON string back into a JavaScript object.
-```
-- 
-```js
-const requestData = JSON.parse(JSON.stringify(pm.request.body.formdata))
-
-console.log(requestData[0])
-```
+## pm.request
+- `JSON.parse(pm.request.body.raw)`, где `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
+- `JSON.parse(JSON.stringify(pm.request.body.formdata))` 
+    - `JSON.parse(JSON.stringify())` technique is used to create a deep copy of an object in JavaScript. 
+    - `JSON.stringify()` function converts JavaScript objects into JSON strings.
+    - `JSON.parse()` - This converts the JSON string back into a JavaScript object.
 - `JSON.parse(request.data)` - 
 - `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста. метод считается устраевшим, но работает
 - `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
@@ -157,15 +155,23 @@ console.log(requestData[0])
 - `pm.request.body.json()` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
 - `pm.request.body.raw`
 - `pm.request.url.toString()` - получить url в виде строки
-- `pm.request.url.query.toObject()` - получить url запроса
+- `pm.request.url.query.toObject()` - получить url запроса в виде объекта JS
 - `pm.request.url.query.toObject().salary` - получить из GET Запроса значение salary
+```js
+const requestData = JSON.parse(JSON.stringify(pm.request.body.formdata))
+console.log(requestData[0])
+```
 
+```js
+{{url}}/object_info_3?name=Ivan&age=17&salary=1000
+var requestData = pm.request.url.query.toObject()
+console.log(requestData)
 
+{name: "Ivan", age: "17", salary: "1000"}
+```
 
 
 `request.data --> pm.request.body`
-
-
 
 # Snippets
 
