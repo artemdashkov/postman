@@ -6,6 +6,11 @@
 - [Environment](#Environment)
 - [Run Collection](#Run-Collection)
 - [Синтаксис JS](#Синтаксис-JS)
+    - [pm.test](#pmtest)
+    - [pm.request](#pmrequest)
+    - [pm.response](#pmresponse)
+    - [pm.expect](#pmexpect)
+    - [console](#console)
 - [Snippets](#Snippets)
 
 # Теория
@@ -68,10 +73,42 @@ is a set of variables that you can reuse in your requests and share with your te
 - `let salary = 1000` - присвоить `salary` число `1000`
 - `to.include()` - проверка параметра
 - `respSalary[0]` - достать первый элемент из массива `respSalary`
+- `typeof variable` - узнать тип переменной variable 
+- `&&` - логическое и
+- `||` - логическое или
 
 ## pm.test
 - `pm.test` - Define tests using the pm.test function, providing a name and function that returns a boolean (true or false) value indicating if the test passed or failed.
 - `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
+
+## pm.request
+- `JSON.parse(pm.request.body.raw)`, где `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
+- `JSON.parse(JSON.stringify(pm.request.body.formdata))` 
+    - `JSON.parse(JSON.stringify())` technique is used to create a deep copy of an object in JavaScript. 
+    - `JSON.stringify()` function converts JavaScript objects into JSON strings.
+    - `JSON.parse()` - This converts the JSON string back into a JavaScript object.
+- `JSON.parse(request.data)` - 
+- `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста. метод считается устраевшим, но работает
+- `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
+- `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны
+- `pm.request.body.formdata` - получить данные в формате formdata
+- `pm.request.body.json()` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
+- `pm.request.body.raw`
+- `pm.request.url.toString()` - получить url в виде строки
+- `pm.request.url.query.toObject()` - получить url запроса в виде объекта JS
+- `pm.request.url.query.toObject().salary` - получить из GET Запроса значение salary
+```js
+const requestData = JSON.parse(JSON.stringify(pm.request.body.formdata))
+console.log(requestData[0])
+```
+
+```js
+{{url}}/object_info_3?name=Ivan&age=17&salary=1000
+var requestData = pm.request.url.query.toObject()
+console.log(requestData)
+
+{name: "Ivan", age: "17", salary: "1000"}
+```
 
 ## pm.response
 - `pm.response` - Ответ сервера
@@ -116,8 +153,8 @@ pm.test("response must be valid and have a body", function () {
 ## pm.expect
 - `pm.expect` syntax gives your test result messages a different format. 
 - `pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
-- `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")`
-- `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")`
+- `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")` - проверить, что есть все существующие свойства в ответе есть в скобках
+- `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")` - проверить, что все свойства в скобках есть в ответе
 ```js
 pm.test("environment to be production", function () {
     pm.expect(pm.environment.get("env")).to.equal("production");
@@ -133,6 +170,7 @@ pm.test("The response has all properties", () => {
 });
 ```
 
+
 ## console
 - `console.log()`
 - `console.log(reqData)` - отобразить в консоле значение переменной reqData
@@ -141,34 +179,7 @@ pm.test("The response has all properties", () => {
 - `console.error()`
 - `console.clear()`
 
-## pm.request
-- `JSON.parse(pm.request.body.raw)`, где `pm.request.body` - получить данные в виде текстового запроса если типа запроса raw-JSON, `JSON.parse(` сделать из данных формат json, когда запрос в виде `raw - json`, (не считывает, если данные были отправлены в формате formdata)
-- `JSON.parse(JSON.stringify(pm.request.body.formdata))` 
-    - `JSON.parse(JSON.stringify())` technique is used to create a deep copy of an object in JavaScript. 
-    - `JSON.stringify()` function converts JavaScript objects into JSON strings.
-    - `JSON.parse()` - This converts the JSON string back into a JavaScript object.
-- `JSON.parse(request.data)` - 
-- `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста. метод считается устраевшим, но работает
-- `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
-- `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны
-- `pm.request.body.formdata` - получить данные в формате formdata
-- `pm.request.body.json()` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
-- `pm.request.body.raw`
-- `pm.request.url.toString()` - получить url в виде строки
-- `pm.request.url.query.toObject()` - получить url запроса в виде объекта JS
-- `pm.request.url.query.toObject().salary` - получить из GET Запроса значение salary
-```js
-const requestData = JSON.parse(JSON.stringify(pm.request.body.formdata))
-console.log(requestData[0])
-```
 
-```js
-{{url}}/object_info_3?name=Ivan&age=17&salary=1000
-var requestData = pm.request.url.query.toObject()
-console.log(requestData)
-
-{name: "Ivan", age: "17", salary: "1000"}
-```
 
 
 `request.data --> pm.request.body`
