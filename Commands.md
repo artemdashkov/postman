@@ -6,11 +6,13 @@
 - [Environment](#Environment)
 - [Run Collection](#Run-Collection)
 - [Синтаксис JS](#Синтаксис-JS)
+    - [циклы](#циклы)
     - [pm.test](#pmtest)
     - [pm.request](#pmrequest)
     - [pm.response](#pmresponse)
     - [pm.expect](#pmexpect)
     - [console](#console)
+
 - [Snippets](#Snippets)
 
 # Теория
@@ -67,7 +69,7 @@ is a set of variables that you can reuse in your requests and share with your te
 - `Persist responses for a session` - необходимо устанавливать чек, чтобы видеть 
 
 # Синтаксис JS
-- `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. у `var` функциональную область видимости, у `let` блочная область видимости
+- `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. у `var` функциональную область видимости (т.е. только внутри функции), у `let` блочная область видимости (т.е. внутри файла)
 - `+reqData.age` - знак `+` означает превратить текстовые данные в числовые 
 - `let name = 'Ivan'` - присвоить `name` строку `'Ivan'`
 - `let salary = 1000` - присвоить `salary` число `1000`
@@ -76,6 +78,50 @@ is a set of variables that you can reuse in your requests and share with your te
 - `typeof variable` - узнать тип переменной variable 
 - `&&` - логическое и
 - `||` - логическое или
+- `count++` - прибавить к count 1
+
+```js
+if (true){
+    console.log("выполняется код")
+}
+
+if (false){
+    console.log("код выполняться не будет")
+}
+
+if (false){
+    console.log("код выполняться не будет")
+} else if (false){
+    console.log("код выполняться не будет")
+} else {
+    console.log("выполняется код")
+}
+```
+
+## Циклы
+### while
+```js
+let count = 0
+while (true){
+    console.log('While', count)
+    count++     
+}
+```
+### for
+```js
+for (let i=0; i < 10; i++){
+    console.log("For i --> ", i)
+}
+```
+
+```js
+// выводит последовательно все значения из i 
+let i = [0, 3, 2, [9, 4], 'string']
+for (let n of i){
+    console.log(n)
+}
+```
+
 
 ## pm.test
 - `pm.test` - Define tests using the pm.test function, providing a name and function that returns a boolean (true or false) value indicating if the test passed or failed.
