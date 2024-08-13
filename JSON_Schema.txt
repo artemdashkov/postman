@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "start_qa_salary": {
+      "type": "string"
+    },
+    "qa_salary_after_6_months": {
+      "type": "string"
+    },
+    "qa_salary_after_12_months": {
+      "type": "string"
+    },
+    "person": {
+      "type": "object",
+      "properties": {
+        "u_name": {
+          "type": "array",
+          "items": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "u_age": {
+          "type": "string"
+        },
+        "u_salary_1.5_year": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "u_name",
+        "u_age",
+        "u_salary_1.5_year"
+      ]
+    }
+  },
+  "required": [
+    "start_qa_salary",
+    "qa_salary_after_6_months",
+    "qa_salary_after_12_months",
+    "person"
+  ]
+}
