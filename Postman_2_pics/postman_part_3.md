@@ -1,27 +1,22 @@
-ДЗ_3 Postman
-=====
-
-1) необходимо залогиниться
-POST
+## 1. POST запрос /login
 http://162.55.220.72:5005/login
-login : str (кроме /)
-password : str
+- login : str (кроме /)
+- password : str
 
-Приходящий токен необходимо передать во все остальные запросы.
+Что нужно сделать: 
+- необходимо залогиниться
+- Приходящий токен необходимо передать во все остальные запросы. дальше все запросы требуют наличие токена.
 
-===================
-дальше все запросы требуют наличие токена.
-===================
+## 2. POST запрос /user_info
 
-2) http://162.55.220.72:5005/user_info
-req. (RAW JSON)
-POST
-age: int
-salary: int
-name: str
-auth_token
-
-
+http://162.55.220.72:5005/user_info
+- req. (RAW JSON)
+- POST
+- age: int
+- salary: int
+- name: str
+- auth_token
+```
 resp.
 {'start_qa_salary':salary,
  'qa_salary_after_6_months': salary * 2,
@@ -30,10 +25,9 @@ resp.
                                 'u_age':age,
                                 'u_salary_1.5_year': salary * 4}
                                 }
-
-Тесты:
-+1) Статус код 200
-2) Проверка структуры json в ответе.
+```
+### 1. Статус код 200
+### 2. Проверка структуры json в ответе.
 ```js
 var respData = pm.response.json()
 var schema = {
@@ -102,29 +96,55 @@ pm.test('Validate the schema json', function () {
 });
 ```
 
-3) В ответе указаны коэффициенты умножения salary, напишите тесты по проверке правильности результата перемножения на коэффициент.
+### 3. В ответе указаны коэффициенты умножения salary, напишите тесты по проверке правильности результата перемножения на коэффициент.
+var koef_1 = 4;
+var koef_1 = 2.9;
+var koef_1 = 2;
+var koef_1 = 1;
 
-4) Достать значение из поля 'u_salary_1.5_year' и передать в поле salary запроса http://162.55.220.72:5005/get_test_user
-===================
+pm.test("Check coefficients_1", function() {
+    pm.expect(respData.person.u_salary_1_5_year).to.eql(respData.person.u_name[1]*4)
+});
 
-3) http://162.55.220.72:5005/new_data
-req.
-POST
-age: int
-salary: int
-name: str
-auth_token
+pm.test("Check coefficients_2", function() {
+    pm.expect(respData.qa_salary_after_12_months).to.eql(respData.person.u_name[1]*2.9)
+});
 
+pm.test("Check coefficients_3", function() {
+    pm.expect(respData.qa_salary_after_6_months).to.eql(respData.person.u_name[1]*2)
+});
+
+pm.test("Check coefficients_4", function () {
+pm.environment.set("variable_key", "variable_value");
+    pm.expect(respData.start_qa_salary).to.eql(respData.person.u_name[1]*1)
+});
+
+### 4. Достать значение из поля 'u_salary_1.5_year' и передать в поле salary запроса http://162.55.220.72:5005/get_test_user
+var u_salary = respData.person.u_salary_1_5_year
+pm.environment.get('salary' = u_salary)
+
+в "Body - form data" добавить: Key - salary, Value - {{salary}}
+
+# 3. POST запрос /new_data
+- http://162.55.220.72:5005/new_data
+- req.
+- POST
+- age: int
+- salary: int
+- name: str
+- auth_token
+
+```
 Resp.
 {'name':name,
   'age': int(age),
   'salary': [salary, str(salary*2), str(salary*3)]}
-
+```
 Тесты:
-1) Статус код 200
-2) Проверка структуры json в ответе.
-3) В ответе указаны коэффициенты умножения salary, напишите тесты по проверке правильности результата перемножения на коэффициент.
-4) проверить, что 2-й элемент массива salary больше 1-го и 0-го
+## 1. Статус код 200
+## 2. Проверка структуры json в ответе.
+## 3. В ответе указаны коэффициенты умножения salary, напишите тесты по проверке правильности результата перемножения на коэффициент.
+## 4. проверить, что 2-й элемент массива salary больше 1-го и 0-го
 ===================
 
 4) http://162.55.220.72:5005/test_pet_info
