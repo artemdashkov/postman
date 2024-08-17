@@ -79,6 +79,8 @@ is a set of variables that you can reuse in your requests and share with your te
 - `&&` - логическое и
 - `||` - логическое или
 - `count++` - прибавить к count 1
+- \ - экранирование
+- // или /* */ - комментарии
 
 ```js
 if (true){
@@ -238,7 +240,6 @@ pm.test("The response has all properties", () => {
 pm.environment.get("variable_key");
 fromEnv = pm.environment.get("url"); // например
 ```
-
 pm.variables.get(""); // ENTER VALUE HERE
 
 ## Set an environment variable
@@ -267,6 +268,21 @@ pm.test("Status code is 200", function () {
 });
 ```
 - `pm.response.to.have.status(200)` - ответ сервера должен иметь статус 200
+
+## Status code: Successful POST request
+Используется для проверки статуса из списка
+```js
+pm.test("Successful POST request", function () {
+    pm.expect(pm.response.code).to.be.oneOf([201, 202]);
+});
+```
+
+## Status code: Code name has string
+```js
+pm.test("Status code name has string", function () {
+    pm.response.to.have.status("OK");
+});
+```
 
 ## Response body: Contains string
 ```js

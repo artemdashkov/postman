@@ -134,16 +134,78 @@ pm.environment.get('salary' = u_salary)
 - name: str
 - auth_token
 
+Тесты:
+## +1. Статус код 200
+## +2. Проверка структуры json в ответе.
 ```
-Resp.
 {'name':name,
   'age': int(age),
   'salary': [salary, str(salary*2), str(salary*3)]}
 ```
-Тесты:
-## 1. Статус код 200
-## 2. Проверка структуры json в ответе.
+Get pespons
+
+`var pespData = pm.response.json()`
+
+Create JSON Schema
+```json
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "age": {
+      "type": "integer"
+    },
+    "name": {
+      "type": "string"
+    },
+    "salary": {
+      "type": "array",
+      "items": [
+        {
+          "type": "integer"
+        },
+        {
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ]
+    }
+  },
+  "required": [
+    "age",
+    "name",
+    "salary"
+  ]
+}
+```
+Validate data:
+```js
+pm.test('Schema is valid', function () {
+    pm.expect(tv4.validate(pespData, schema)).to.be.true;
+});
+```
 ## 3. В ответе указаны коэффициенты умножения salary, напишите тесты по проверке правильности результата перемножения на коэффициент.
+```js
+var pespData = pm.response.json()
+const salary = 1200
+var coef_1 = 1
+var coef_2 = 2
+var coef_3 = 3
+pm.test('Test coef_1', function () {
+    pm.expect(pespData.salary[0]/salary).to.eql(coef_1)
+});
+
+pm.test('Test coef_2', function () {
+    pm.expect(pespData.salary[1]/salary).to.eql(coef_2)
+});
+
+pm.test('Test coef_3', function () {
+    pm.expect(pespData.salary[2]/salary).to.eql(coef_3)
+});
+```
+
 ## 4. проверить, что 2-й элемент массива salary больше 1-го и 0-го
 ===================
 
