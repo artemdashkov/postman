@@ -16,6 +16,8 @@
 - [Snippets](#Snippets)
 
 # Теория
+- chai.js documentation - https://www.chaijs.com/api/bdd/
+- node.js documentation - https://www.chaijs.com/api/assert/
 - базовый url
 - endpoint - функция, которая обрабатывает запрос
 
@@ -138,10 +140,13 @@ for (let n of i){
 - `JSON.parse(request.data)` - 
 - `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста. метод считается устраевшим, но работает
 - `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
-- `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны
+- `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны. The data in the request body. This object is immutable and can't be modified from scripts.
 - `pm.request.body.formdata` - получить данные в формате formdata
 - `pm.request.body.json()` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
 - `pm.request.body.raw`
+- `pm.request.headers:HeaderList` - The list of headers for the current request
+- `pm.request.method:String` - The HTTP request method:
+- `pm.request.url` - The request URL
 - `pm.request.url.toString()` - получить url в виде строки
 - `pm.request.url.query.toObject()` - получить url запроса в виде объекта JS
 - `pm.request.url.query.toObject().salary` - получить из GET Запроса значение salary
@@ -163,11 +168,20 @@ console.log(requestData)
 - `pm.response.json()` - To parse JSON data
 - `pm.response.text()` - ответ сервера в виде текста 
 - `xml2Json(pm.response.text());` - To parse XML
-- `pm.response.to.be.ok` 
+- `pm.response.to.be.info` - Check 1XX status code 
+- `pm.response.to.be.success` - Check 2XX status code 
+- `pm.response.to.be.redirection` - Check 3XX status code
+- `pm.response.to.be.clientError` - Check 4XX status code
+- `pm.response.to.be.serverError` - Check 5XX status code
+- `pm.response.to.be.error` - Check 4XX or 5XX status code
+- `pm.response.to.be.ok` - Check 2XX status code
+
 - `pm.response.to.be.withBody`
 - `pm.response.to.be.json`
+- `pm.response.to.have.body()`
 - `pm.response.to.have.jsonBody("")`
 - `pm.response.to.have.status(200)`
+- `pm.response.to.not.have.status(200)` - не является статусом 200
 - `pm.response.to.not.be.error`
 - `pm.response.to.not.have.jsonBody("error");`
 
@@ -200,9 +214,27 @@ pm.test("response must be valid and have a body", function () {
 
 ## pm.expect
 - `pm.expect` syntax gives your test result messages a different format. 
-- `pm.expect(respName.name).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой
+- `pm.expect(resData).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой, вместо "String" можно использовать "Number", null - пустота, "undefined" - неизвестная переменная
+- `pm.expect(resData.code == 200).to.be.true`
+- `pm.expect(resData.code == 200).to.be.false`
+- `pm.expect(pm.response.code).to.be.at.least(200)` - ожидаемое значение больше либо равно 200
+- `pm.expect(pm.response.code).to.be.at.most(200)` - ожидаемое значение меньше либо равно 200
+- `pm.expect(pm.response.code).to.be.above(199)` - проверить, что код ответа больше 199
+- `pm.expect(pm.response.code).to.be.below(201)` - проверить, что код ответа меньше 201
+- `pm.expect(pm.response.code).to.be.within(200, 205)` - ожидаемое значение должно быть в диапазоне от 200 до 205
+- `pm.expect(pm.response.code).to.be.closeTo(202, 1)` - ожидаемый ответ в диапазоне от 201 до 203
+- `pm.expect(pm.response.code).to.match(/^200/)` - сравнение с использованием регулярных выражений
+- `pm.expect(null).to.be.null`
+- `pm.expect(null).to.be.NaN` - Проверка чисел
+- `pm.expect(resData).to.eql(200)` - проверить соответствие
+- `pm.expect(resData).to.equal(200)` - проверить соответствие, принебрегает тип данных, строка и номера будут равны
+- `pm.expect(resData).to.equal(200)` - проверить соответствие, учитывает тип данных, строка и номера будут не равны
+- `pm.expect(resData).to.include("any_string")` - проверить наличие строки в ответе
 - `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")` - проверить, что есть все существующие свойства в ответе есть в скобках
 - `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")` - проверить, что все свойства в скобках есть в ответе
+- `pm.expect(resData).to.have.string("age")` - проверить, что ответ имеет строку "age"
+
+
 ```js
 pm.test("environment to be production", function () {
     pm.expect(pm.environment.get("env")).to.equal("production");
@@ -278,6 +310,7 @@ pm.test("Successful POST request", function () {
 ```
 
 ## Status code: Code name has string
+Проверка статуса
 ```js
 pm.test("Status code name has string", function () {
     pm.response.to.have.status("OK");
