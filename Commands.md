@@ -167,7 +167,8 @@ console.log(requestData)
 - `pm.response` - Ответ сервера
 - `pm.response.json()` - To parse JSON data
 - `pm.response.text()` - ответ сервера в виде текста 
-- `xml2Json(pm.response.text());` - To parse XML
+- `xml2Json(pm.response.text())` - To parse XML
+- `xml2Json(responseBody)` - To parse XML
 - `pm.response.to.be.info` - Check 1XX status code 
 - `pm.response.to.be.success` - Check 2XX status code 
 - `pm.response.to.be.redirection` - Check 3XX status code
