@@ -207,6 +207,13 @@ pm.test('Test coef_3', function () {
 ```
 
 ## 4. проверить, что 2-й элемент массива salary больше 1-го и 0-го
+```js
+pm.test("Check item salary 2 > 1 & 2 > 0", function () {
+    pm.expect(+pespData.salary[2]).to.be.above(+pespData.salary[1]);
+    pm.expect(+pespData.salary[2]).to.be.above(+pespData.salary[0]);
+});
+```
+
 ===================
 
 4) http://162.55.220.72:5005/test_pet_info
@@ -226,9 +233,41 @@ Resp.
 
 
 Тесты:
-1) Статус код 200
-2) Проверка структуры json в ответе.
-3) В ответе указаны коэффициенты умножения weight, напишите тесты по проверке правильности результата перемножения на коэффициент.
+## +1 Статус код 200
+## +2 Проверка структуры json в ответе.
+```js
+var respData = pm.response.json();
+var schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "age": {
+      "type": "integer"
+    },
+    "daily_food": {
+      "type": "number"
+    },
+    "daily_sleep": {
+      "type": "number"
+    },
+    "name": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "age",
+    "daily_food",
+    "daily_sleep",
+    "name"
+  ]
+}
+
+pm.test('Check schema is valid', function () {
+    pm.expect(tv4.validate(respData, schema)).to.be.true;
+});
+```
+
+### 3 В ответе указаны коэффициенты умножения weight, напишите тесты по проверке правильности результата перемножения на коэффициент.
 
 ===================
 
