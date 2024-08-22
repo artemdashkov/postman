@@ -214,27 +214,27 @@ pm.test("Check item salary 2 > 1 & 2 > 0", function () {
 });
 ```
 
-===================
+# 4. POST запрос /test_pet_info
+http://162.55.220.72:5005/test_pet_info
 
-4) http://162.55.220.72:5005/test_pet_info
-req.
+```
 POST
 age: int
 weight: int
 name: str
 auth_token
-
-
+```
+```
 Resp.
 {'name': name,
  'age': age,
  'daily_food':weight * 0.012,
  'daily_sleep': weight * 2.5}
+```
 
-
-Тесты:
-## +1 Статус код 200
-## +2 Проверка структуры json в ответе.
+## Тесты:
+## 1. Статус код 200
+## 2. Проверка структуры json в ответе.
 ```js
 var respData = pm.response.json();
 var schema = {
