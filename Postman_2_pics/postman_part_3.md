@@ -302,9 +302,99 @@ Resp.
 ## Тесты:
 ### 1) + Статус код 200
 ### 2) Проверка структуры json в ответе.
-3) Проверить что занчение поля name = значению переменной name из окружения
-4) Проверить что занчение поля age в ответе соответсвует отправленному в запросе значению поля age
+```js
+var respData = pm.response.json()
 
+var schema = {
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "age": {
+      "type": "string"
+    },
+    "family": {
+      "type": "object",
+      "properties": {
+        "children": {
+          "type": "array",
+          "items": [
+            {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            {
+              "type": "array",
+              "items": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          ]
+        },
+        "u_salary_1_5_year": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "children",
+        "u_salary_1_5_year"
+      ]
+    },
+    "name": {
+      "type": "string"
+    },
+    "salary": {
+      "type": "integer"
+    }
+  },
+  "required": [
+    "age",
+    "family",
+    "name",
+    "salary"
+  ]
+}
+
+pm.test('Schema is valid', function () {
+    pm.expect(tv4.validate(respData, schema)).to.be.true;
+});
+
+```
+
+### 3) Проверить что занчение поля name = значению переменной name из окружения
+```js
+var reqData = JSON.parse(JSON.stringify(pm.request.body.formdata))
+var reqName = reqData[2].value
+var envName = pm.environment.get("name");
+
+pm.test('Проверить что занчение поля name = значению переменной name из окружения', function() {
+    pm.expect(reqName).to.eql(envName);
+})
+```
+
+### 4) Проверить что значение поля age в ответе соответсвует отправленному в запросе значению поля age
+```js
+var respData = pm.response.json()
+var raspAge = respData.age
+
+var reqData = JSON.parse(JSON.stringify(pm.request.body.formdata))
+var reqAge = reqData[0].value
+
+pm.test('Проверить что значение поля age в ответе соответсвует отправленному в запросе значению поля age', function() {
+    pm.expect(raspAge).to.eql(reqAge);
+});
+```
 ===================
 
 6) http://162.55.220.72:5005/currency
