@@ -141,7 +141,19 @@ for (let n of i){
 - `request.data` - получить данные запроса в виде JSON, подходит для формата formdata, для raw json данные будут в виде текста. метод считается устраевшим, но работает
 - `pm.request` - выводит всю информцаю о запросе, в том числе данные много лишних данных
 - `pm.request.body` - получить данные запроса в виде текста если тип запроса raw-JSON, при формате formdata данные практически нечитабельны. The data in the request body. This object is immutable and can't be modified from scripts.
+
 - `pm.request.body.formdata` - получить данные в формате formdata
+    [{…}, {…}, {…}, {…}]
+- `pm.request.body.formdata[1]` - получить данные в формате formdata
+    undefined
+
+- `JSON.parse(JSON.stringify(pm.request.body.formdata))` 
+    [{…}, {…}, {…}, {…}]
+- `JSON.parse(JSON.stringify(pm.request.body.formdata))[1]` 
+    {key: "weight", value: "100", type: "text"}
+- `JSON.parse(JSON.stringify(pm.request.body.formdata))[1].value` 
+    "100"
+
 - `pm.request.body.json()` - получить данные в формате JSON (не считывает, если данные были отправлены в формате formdata)
 - `pm.request.body.raw`
 - `pm.request.headers:HeaderList` - The list of headers for the current request

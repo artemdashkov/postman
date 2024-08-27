@@ -215,9 +215,9 @@ pm.test("Check item salary 2 > 1 & 2 > 0", function () {
 ```
 
 # 4. POST запрос /test_pet_info
+```
 http://162.55.220.72:5005/test_pet_info
 
-```
 POST
 age: int
 weight: int
@@ -268,11 +268,23 @@ pm.test('Check schema is valid', function () {
 ```
 
 ### 3. В ответе указаны коэффициенты умножения weight, напишите тесты по проверке правильности результата перемножения на коэффициент.
+```js
+var respData = pm.response.json();
+var reqData = pm.request.body.formdata;
+var reqJSON = JSON.parse(JSON.stringify(reqData));
 
-===================
+var coef_1 = 0.012
+var coef_2 = 2.5
 
-5) http://162.55.220.72:5005/get_test_user
-req.
+pm.test('Check weight coeff.', function () {
+    pm.expect(respData.daily_sleep).to.eql((+reqJSON[1].value)*coef_2)
+});
+```
+
+# 5. POST запрос /get_test_user
+```
+http://162.55.220.72:5005/get_test_user
+
 POST
 age: int
 salary: int
@@ -286,10 +298,10 @@ Resp.
  'family':{'children':[['Alex', 24],['Kate', 12]],
  'u_salary_1.5_year': salary * 4}
   }
-
-Тесты:
-1) Статус код 200
-2) Проверка структуры json в ответе.
+```
+## Тесты:
+### 1) + Статус код 200
+### 2) Проверка структуры json в ответе.
 3) Проверить что занчение поля name = значению переменной name из окружения
 4) Проверить что занчение поля age в ответе соответсвует отправленному в запросе значению поля age
 
