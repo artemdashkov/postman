@@ -16,10 +16,24 @@
 - [Snippets](#Snippets)
 
 # Теория
+### Ссылки на ресурсы
 - chai.js documentation - https://www.chaijs.com/api/bdd/
 - node.js documentation - https://www.chaijs.com/api/assert/
+### Термины
+- Объект - неупорядоченное множество пар ключ-значение
 - базовый url
 - endpoint - функция, которая обрабатывает запрос
+### Структура автотеста
+- `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
+### Объявление переменной
+- `var x = 3` , где var ключевое слово, х имя переменной
+- `var name = "Jony"`
+- `var response = pm.response`
+- `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. 
+    - `var` функциональную область видимости (т.е. только внутри функции), 
+    - `let` блочная область видимости (т.е. внутри блока), let использовать безопаснее, потому что если переменная нужна только здесь, то лучше ограничить ее область видимости
+- `const` - объявление константы, которую нельзя будет в дальнейшем менять
+- `(никак)` - т.е. не использовать `var`, `let`, `const`, так объявляется глобальная переменная, которая будет везде видна
 
 # Методы
 - GET - retrieves data from an API.
@@ -83,7 +97,9 @@ is a set of variables that you can reuse in your requests and share with your te
 - `count++` - прибавить к count 1
 - \ - экранирование
 - // или /* */ - комментарии
-
+- `=` присваивает значение
+- `==` равенство с приведением типов ("2" = 2)
+- `===` строгое равенство ("2" != 2)
 ```js
 if (true){
     console.log("выполняется код")
@@ -176,8 +192,8 @@ console.log(requestData)
 ```
 
 ## pm.response
-- `pm.response` - Ответ сервера
-- `pm.response.json()` - To parse JSON data
+- `pm.response` - Ответ сервера, объект, который содержит много дополнительной информации ответа
+- `pm.response.json()` - To parse JSON data, объект.
 - `pm.response.text()` - ответ сервера в виде текста 
 - `xml2Json(pm.response.text())` - To parse XML
 - `xml2Json(responseBody)` - To parse XML
