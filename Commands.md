@@ -1,6 +1,5 @@
 # Содержание
 - [Теория](#Теория)
-- [Методы](#Методы)
 - [SOAP API](#SOAP-API)
 - [Вкладки Postman](#Вкладки-Postman)
 - [Environment](#Environment)
@@ -12,35 +11,89 @@
     - [pm.response](#pmresponse)
     - [pm.expect](#pmexpect)
     - [console](#console)
-
 - [Snippets](#Snippets)
 
 # Теория
+
 ### Ссылки на ресурсы
 - chai.js documentation - https://www.chaijs.com/api/bdd/
 - node.js documentation - https://www.chaijs.com/api/assert/
-### Термины
-- Объект - неупорядоченное множество пар ключ-значение
-- базовый url
-- endpoint - функция, которая обрабатывает запрос
-### Структура автотеста
-- `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
-### Объявление переменной
-- `var x = 3` , где var ключевое слово, х имя переменной
-- `var name = "Jony"`
-- `var response = pm.response`
-- `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. 
-    - `var` функциональную область видимости (т.е. только внутри функции), 
-    - `let` блочная область видимости (т.е. внутри блока), let использовать безопаснее, потому что если переменная нужна только здесь, то лучше ограничить ее область видимости
-- `const` - объявление константы, которую нельзя будет в дальнейшем менять
-- `(никак)` - т.е. не использовать `var`, `let`, `const`, так объявляется глобальная переменная, которая будет везде видна
 
-# Методы
+### Методы
 - GET - retrieves data from an API.
 - POST - sends new data to an API. отправляет информацию на сервер, например картинку.
 - PUT - replace existing data.
 - DELETE - delete existing data.
 - PATCH - update some existing data fields
+
+### Термины
+- **Объект** - определение из ООП. Объект сущность, которая имеет набор свойств объекта и функций - поведение объекта. 
+```js
+var cat = {
+    name: "Barsik",
+    year: 1,
+
+    sleep: function (){
+        //sleeping code
+    }
+}
+```
+- **Объект (json-объект)** - неупорядоченное множество пар ключ:значение. (свойство объекта, ключ объекта, параметр объекта - это все одно и то же)
+`{"query":"Виктор Иван", "age":7}`
+- **Массив** - набор упорядоченных значений, массив заключен в квадратные скобки `fruits = ['яблоко', 'банан', 'слива']`, чтобы достать элемент массива, необходимо указать его имя и в квадратных скобках индекс элемента, например `fruits[1] = 'банан'`
+- **базовый url** - например http://162.55.220.72:5005
+- **endpoint** - функция, которая обрабатывает запрос, например `/user_info_2`
+
+### Объявление переменной
+- `var x = 3` , где var ключевое слово, х имя переменной
+- `var name = "Jony"`
+- `var response = pm.response`
+- `var jsonData` или `let jsonData` - объявление переменной. у переменных `var` и `let` разная область видимости. 
+    - `var` функциональную область видимости (т.е. только внутри функции), объявленная внутри функции переменная за пределами функции уже не будет видна
+    - `let` блочная область видимости (т.е. внутри блока, внутри фигурных скобок), let использовать безопаснее, потому что если переменная нужна только здесь, то лучше ограничить ее область видимости
+- `const` - объявление константы, которую нельзя будет в дальнейшем менять, локальная переменная, за пределами блока не будет видна
+- `(никак)` - т.е. не использовать `var`, `let`, `const`, так объявляется глобальная переменная, которая будет везде видна
+
+### Обратиться к свойству объекта
+- Чтобы получить значение объекта, необходимо обращаться по ключу (указывать в квардратных скобках ключ или указывать через точку). `variable = {"query":"Виктор Иван", "age":7}`, 
+    - `variable['query'] --> "Виктор Иван"`
+    - `variable.query --> "Виктор Иван"` - обычно используется такая форма записи при обращении к свойству объекта
+
+### Object.keys() - получить все ключи объекта
+**Object.keys()** - позволяет получить все ключи объекта в виде массива
+```js
+var cat = {
+    name: "Barsik",
+    age: 10,
+    sleep: function() {
+        // sleeping code
+    }
+}
+
+Object.keys(cat);
+> ['name', 'age', 'sleep']
+```
+
+
+### Достать значение из XML
+```xml
+<req>
+    <query attr1="value 1" attr2="value 2">Виктор Иван</query>
+    <count>7</count>
+</req>
+```
+где
+- `<req>` - корневой элемент
+- `<query>` - название тега = название параметра
+- `attr1="value 1" attr2="value 2` - атрбиты, которые находятся внутри тегов=параметров
+- `Виктор Иван` - внутри тега значение параметра
+- `</query>` - закрывающий тег
+
+Чтобы достать значения из формата xml нужно его переконвертировать в json:
+- `xml2Json(responseBody)`
+
+### Структура автотеста
+- `pm.test("Status code is 200", function () {pm.response.to.have.status(200);});` - объект постмана `pm`, у которого ест метод `test`, метод принимает два аргумента: 1. Название теста; 2. функция (в частности которая проверит статус ответа)
 
 # SOAP API
 
@@ -194,7 +247,7 @@ console.log(requestData)
 ## pm.response
 - `pm.response` - Ответ сервера, объект, который содержит много дополнительной информации ответа
 - `pm.response.json()` - To parse JSON data, объект.
-- `pm.response.text()` - ответ сервера в виде текста 
+- `pm.response.text()` - преобразовывает ответ сервера в виде текста, тип данных string 
 - `xml2Json(pm.response.text())` - To parse XML
 - `xml2Json(responseBody)` - To parse XML
 - `pm.response.to.be.info` - Check 1XX status code 
@@ -204,10 +257,9 @@ console.log(requestData)
 - `pm.response.to.be.serverError` - Check 5XX status code
 - `pm.response.to.be.error` - Check 4XX or 5XX status code
 - `pm.response.to.be.ok` - Check 2XX status code
-
 - `pm.response.to.be.withBody`
 - `pm.response.to.be.json`
-- `pm.response.to.have.body()`
+- **pm.response.to.have.body()** - сравнивает ответ сервера в виде объекта с со строкой, например `pm.response.to.have.body("User-agent: *\nDisallow: /deny\n")`
 - `pm.response.to.have.jsonBody("")`
 - `pm.response.to.have.status(200)`
 - `pm.response.to.not.have.status(200)` - не является статусом 200
@@ -242,6 +294,7 @@ pm.test("response must be valid and have a body", function () {
 ```
 
 ## pm.expect
+все что написано после функции pm.expect() выполняться не будет
 - `pm.expect` syntax gives your test result messages a different format. 
 - `pm.expect(resData).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой, вместо "String" можно использовать "Number", null - пустота, "undefined" - неизвестная переменная
 - `pm.expect(resData.code == 200).to.be.true`
@@ -418,5 +471,70 @@ pm.test("Check all data are in response", function () {
 // Проверить, что хотя бы какие-либо данные есть в ответе сервера
 pm.test("Check all data are in response", function () {
     pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name");
+});
+```
+
+# Тесты на Body: Text
+Snippet. Response body: Is equal to a string
+```js
+pm.test("Body is correct", function () {
+    pm.response.to.have.body("User-agent: *\nDisallow: /deny\n");
+});
+// pm.response - ответ сервера
+// to.have.body - проверяет все тело целиком
+// "User-agent: *\nDisallow: /deny\n" - текст, который должен содержать ответ сервера, необходимо учитывать перенос строки \n
+```
+
+Snippet. Response body: Contains string
+```js
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include("User-agent");
+});
+// to.include - содержит
+```
+Проверка соответствия
+```js
+pm.test("Body через to.be.true", function () {
+    pm.expect(pm.response.text() == "User-agent: *\nDisallow: /deny\n").to.be.true;
+});
+// to.include - содержит
+```
+Проверка длины
+```js
+pm.test("Проверка длины", function () {
+    pm.expect(pm.response.text()).to.have.lengthOf(30);
+});
+// to.have.lengthOf(30) - длина строки 30
+```
+Проверка длины больше 20
+```js
+pm.test("Проверка длины больше 20", function () {
+    pm.expect(pm.response.text()).to.have.lengthOf.above(20);
+});
+```
+Проверка существования текста
+```js
+pm.test("Проверка существования текста", function () {
+    pm.expect(pm.response.text()).to.exist;
+});
+```
+Проверка отсутствия текста
+```js
+pm.test("Проверка отсутствия текста", function () {
+    pm.expect(pm.response.text()).to.not.exist;
+});
+```
+Проверка что текст не пустой
+```js
+pm.test("Проверка что текст не пустой", function () {
+    pm.expect(pm.response.text()).to.not.be.empty;
+});
+```
+
+# Тесты на Body: JSON
+```js
+pm.test("Your test name", function () {
+    var jsonData = pm.response.json();
+    pm.expect(jsonData.value).to.eql(100);
 });
 ```
