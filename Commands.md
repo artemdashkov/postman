@@ -16,7 +16,7 @@
 # Теория
 
 ### Ссылки на ресурсы
-- chai.js documentation - https://www.chaijs.com/api/bdd/
+- chai.js documentation, библиотека, которая расширяет функционал тестов - https://www.chaijs.com/api/bdd/
 - node.js documentation - https://www.chaijs.com/api/assert/
 
 ### Методы
@@ -297,7 +297,8 @@ pm.test("response must be valid and have a body", function () {
 все что написано после функции pm.expect() выполняться не будет
 - `pm.expect` syntax gives your test result messages a different format. 
 - `pm.expect(resData).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой, вместо "String" можно использовать "Number", null - пустота, "undefined" - неизвестная переменная
-- `pm.expect(resData.code == 200).to.be.true`
+- `pm.expect(resData.code == 200).to.be.true` - позволяет выполнять не строгое равенство, строка будет равна числу
+- `pm.expect(resData.code == 200).to.be.ok` - позволяет выполнять не строгое равенство, строка будет равна числу
 - `pm.expect(resData.code == 200).to.be.false`
 - `pm.expect(pm.response.code).to.be.at.least(200)` - ожидаемое значение больше либо равно 200
 - `pm.expect(pm.response.code).to.be.at.most(200)` - ожидаемое значение меньше либо равно 200
@@ -308,9 +309,9 @@ pm.test("response must be valid and have a body", function () {
 - `pm.expect(pm.response.code).to.match(/^200/)` - сравнение с использованием регулярных выражений
 - `pm.expect(null).to.be.null`
 - `pm.expect(null).to.be.NaN` - Проверка чисел
-- `pm.expect(resData).to.eql(200)` - проверить соответствие
-- `pm.expect(resData).to.equal(200)` - проверить соответствие, принебрегает тип данных, строка и номера будут равны
-- `pm.expect(resData).to.equal(200)` - проверить соответствие, учитывает тип данных, строка и номера будут не равны
+- `pm.expect(resData).to.eql(200)` - проверить полное равенство (===), позвояляет сравнивать объекты. вместо `.eql` можно использовать `.eqls` 
+- `pm.expect(resData).to.equal(200)` - проверить полное равенство (===), учитывает тип данных, строка и номера будут не равны, позволяет сравнивать **только** значения. вместо `.equal` можно использовать `.equals` и `.eq`
+- `pm.expect(resData).to.deep.equal(200)` работает аналогичным образом как и `pm.expect(resData).to.eql(200)`
 - `pm.expect(resData).to.include("any_string")` - проверить наличие строки в ответе
 - `pm.expect(resData).to.have.all.keys("age", "daily_food", "dail", "name")` - проверить, что есть все существующие свойства в ответе есть в скобках
 - `pm.expect(resData).to.have.any.keys("age", "daily_food", "dail", "name")` - проверить, что все свойства в скобках есть в ответе
@@ -532,9 +533,106 @@ pm.test("Проверка что текст не пустой", function () {
 ```
 
 # Тесты на Body: JSON
+Проверяем равенство значения через eql - позволяет сравнивать объекты/equal - позволяет сравнивать только значение
 ```js
-pm.test("Your test name", function () {
-    var jsonData = pm.response.json();
+var jsonData = pm.response.json();
+
+pm.test("Тест через eql", function () {
     pm.expect(jsonData.value).to.eql(100);
 });
+
+pm.test("Тест через equal", function () {
+    pm.expect(jsonData.value).to.equals(100);
+});
+// проверяем, что значение value в ответе равно 100
+```
+Проверяем равенство через deep.equal - позволяет сравнивать не только значения, но и объекты, массивы и т.д.
+```js
+pm.test("Тест на type через deep.equal", function () {
+    pm.expect(jsonData).to.deep.equal({
+    "type": "error",
+    "message": " email test_demo_2@gmail.com уже есть в базе"
+});
+});
+
+pm.test("Тест на type через deep.equal", function () {
+    pm.expect(jsonData).to.deep.equal({
+    "type": "error",
+    "message": " email test_demo_2@gmail.com уже есть в базе"
+}).and.equal({
+    "type": "error",
+    "message": " email test_demo_2@gmail.com уже есть в базе"
+});
+});
+// deepl.equal в отличии от equal может работать в цепочке
+```
+
+Проверяем тело ответа
+```js
+pm.test("Body is correct", function () {
+    pm.response.to.have.body("response_body_string");
+});
+// response_body_string - можно скопировать полностью ответа в виде json. вставлять без кавычек
+```
+Проверяем наличие текста в ответе
+```js
+pm.test("Body matches string", function () {
+    pm.expect(pm.response.text()).to.include("3000");
+});
+
+// учитывать, что текст на русском языке при конвертации из json в txt перекодировывается
+```
+Проверяем наличие текста в ответе с помощью include
+```js
+var jsonData = pm.response.json();
+
+pm.test("Your test name", function () {
+    pm.expect(jsonData.message).to.include("email");
+});
+// ищем вхождение слова в значение message
+
+pm.test("to.include", function () {
+    pm.expect(jsonData).to.include({"message": " email test_demo_2@gmail.com уже есть в базе"});
+});
+// вхождение объекта в json ответ
+```
+## iclude vs deep.include
+**include** - вхождение элемента, используется для простой строки
+
+**deep.include** - вхождение элемента или дочернего объекта, если хотим залезть на уровень ниже по дереву ответа, при тестировании дочерених объектов будет срабатывать только `deep.include`
+
+Пример 1
+```js
+{
+    "type": "error",
+    "message": " email test_demo_2@gmail.com уже есть в базе"
+}
+pm.expect(jsonData.type).to.include("error"); // будет работать
+pm.expect(jsonData.type).to.deep.include("error"); // будет работать
+```
+Пример 2
+```js
+{
+    "type": "error",
+    "data": {"message":"MSG"}
+}
+pm.expect(jsonData.data).to.include({"message":"MSG"}); // будет работать
+pm.expect(jsonData.data).to.deep.include({"message":"MSG"}); // будет работать
+```
+Пример 3
+```js
+{
+    "type": "error",
+    "data": {"message":"MSG"}
+}
+pm.expect(jsonData).to.deep.include({data:{"message":"MSG"}}); //если мы хотим убедиться в наличии целого дочернего элемента, то будет работать только `deep.include`
+```
+
+## .nested
+позволяет писать путь к тестируемому объекту в дот натации
+```js
+{a:{b:['x','y']}}
+
+pm.expect(jsonData.a.b[1]).to.include('y');
+pm.expect(jsonData).to.nested.include({'a.b[1]':'y'});
 ```
