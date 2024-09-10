@@ -5,6 +5,7 @@
 - [Environment](#Environment)
 - [Run Collection](#Run-Collection)
 - [Синтаксис JS](#Синтаксис-JS)
+    - [конструктор](#конструктор)
     - [циклы](#циклы)
     - [pm.test](#pmtest)
     - [pm.request](#pmrequest)
@@ -12,7 +13,11 @@
     - [pm.expect](#pmexpect)
     - [console](#console)
 - [Snippets](#Snippets)
-
+- [Тесты на Body-Text](#Тесты-на-Body-Text)
+- [Тесты на Body-JSON](#Тесты-на-Body-JSON)
+    - [iclude vs deep.include](#iclude-vs-deepinclude)
+    - [.nested](#nested)
+    - [property, keys](#Тесты-на-свойстваключи-объекта-в-Postman---property-keys-Chaijs)
 # Теория
 
 ### Ссылки на ресурсы
@@ -153,6 +158,9 @@ is a set of variables that you can reuse in your requests and share with your te
 - `=` присваивает значение
 - `==` равенство с приведением типов ("2" = 2)
 - `===` строгое равенство ("2" != 2)
+- создание массива
+    - var items = new Array(); например `var nums = new Array(1, 2, 3);`
+    - var items = []; например `var nums = [1, 2, 3];` - литеральный синтаксис
 ```js
 if (true){
     console.log("выполняется код")
@@ -169,6 +177,20 @@ if (false){
 } else {
     console.log("выполняется код")
 }
+```
+## Конструктор
+```js
+// создаем конструктор
+function Cat (name, year) {
+    this.name = name;
+    this.year = year;
+    this.sleep = function() {
+        //sleeping code
+    }
+}
+// создаем объект на основе конструктора
+var barsik = new Cat("Barsik", 1)
+// barsik - имя переменной; new - ключевое слово, которое говорит, что будем создавать новый объект с помощью конструктора; Cat - имя конструктора; ("Barsik", 1) - аргументы функции: имя и возраст
 ```
 
 ## Циклы
@@ -296,7 +318,7 @@ pm.test("response must be valid and have a body", function () {
 ## pm.expect
 все что написано после функции pm.expect() выполняться не будет
 - `pm.expect` syntax gives your test result messages a different format. 
-- `pm.expect(resData).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой, вместо "String" можно использовать "Number", null - пустота, "undefined" - неизвестная переменная
+- `pm.expect(resData).to.be.a("String")` - `to.be.a("String")` - проверить, что тип данных является строкой, вместо "String" можно использовать "Number" - число, null - пустота, "undefined" - неизвестная переменная, "array" - массив, "object" - объект
 - `pm.expect(resData.code == 200).to.be.true` - позволяет выполнять не строгое равенство, строка будет равна числу
 - `pm.expect(resData.code == 200).to.be.ok` - позволяет выполнять не строгое равенство, строка будет равна числу
 - `pm.expect(resData.code == 200).to.be.false`
@@ -695,3 +717,67 @@ pm.test("Проверить наличие одного свойства", funct
 ```js
 pm.expect(jsonData).to.have.nested.property('suggestions[0].data.gender', 'FEMALE');
 ```
+
+## Типы элементов
+Chai.js: .a (an), .instanceof
+
+.instanceof - оператор, который позволяет проверить, создан ли объект данной функцией, работает для любых функций - как встроенных, так и наших. Используется для того, чтобы проверить что дочерний элемент является объектом.
+пример:
+ - `pm.expect(jsonData.suggestions[0].data).to.be.an.instanceof(Object)`
+ - `pm.expect(jsonData.companys).to.be.an.instanceof(Array)`
+
+.a (an) - выполняет аналогичные функции, что и .instanceof. Проще использовать .a (an), т.к. запись выглядит проще и понятнее.
+- `pm.expect(jsonData.type).to.be.a('string')`
+
+проверка, что тип данных строка
+```js
+pm.test("type - это строка", function () {
+    pm.expect(jsonData.type).to.be.a('string');
+});
+```
+проверка, что тип данных объект
+```js
+pm.test("jsonData - это объект", function () {
+    pm.expect(jsonData).to.be.a('object');
+});
+```
+проверка, что тип данных массив
+```js
+pm.test("jsonData - это массив", function () {
+    pm.expect(jsonData).to.be.an('array');
+});
+```
+проверка, что тип данных число
+```js
+pm.test("jsonData - это массив", function () {
+    pm.expect(jsonData.tasks[0].id_task).to.be.a('number');
+});
+```
+Цепочка проверок
+```js
+pm.test("Цепочка проверок", function () {
+    pm.expect(jsonData.tasks).to.be.an('array').that.deep.includes({
+        "name":"Новая",
+        "id_task":32
+    });
+});
+```
+Свойство объекта - это число
+```js
+pm.test("Свойство объекта - это число", function () {
+    pm.expect({a: 1}).to.have.property('a').that.is.a('number');
+});
+```
+Проверка что, объект создан с помощью конструктора
+```js
+function Cat () {}
+pm.expect(new Cat()).to.be.an.instanceof(Cat);
+// Проверка что, объект "new Cat()" создан с помощью конструктора Cat
+```
+Проверка что, массив является массивом
+```js
+pm.expect([1, 2]).to.be.an.instanceof(Array);
+// Проверка что, массив является массивом
+```
+
+## Тесты на массивы
