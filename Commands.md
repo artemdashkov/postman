@@ -18,11 +18,17 @@
     - [iclude vs deep.include](#iclude-vs-deepinclude)
     - [.nested](#nested)
     - [property, keys](#Тесты-на-свойстваключи-объекта-в-Postman---property-keys-Chaijs)
+    - [.nested](#nested)
+    - [Типы элементов](#Типы-элементов)
+    - [Тесты на массивы](#Тесты-на-массивы)
+    
 # Теория
 
 ### Ссылки на ресурсы
-- chai.js documentation, библиотека, которая расширяет функционал тестов - https://www.chaijs.com/api/bdd/
-- node.js documentation - https://www.chaijs.com/api/assert/
+- chai.js documentation, библиотека, которая расширяет функционал тестов 
+    - https://www.chaijs.com/api/bdd/
+    - https://www.chaijs.com/api/assert/
+- node.js documentation - https://nodejs.org/docs/latest/api/assert.html 
 
 ### Методы
 - GET - retrieves data from an API.
@@ -30,6 +36,18 @@
 - PUT - replace existing data.
 - DELETE - delete existing data.
 - PATCH - update some existing data fields
+
+### Ответ сервера
+- 200	Запрос успешно обработан
+- 400	Некорректный запрос (невалидный JSON или XML)
+- 401	В запросе отсутствует API-ключ
+- 403	В запросе указан несуществующий API-ключ. 
+    - Или не подтверждена почта
+    - Или исчерпан дневной лимит по количеству запросов
+- 405	Запрос сделан с методом, отличным от POST
+- 413	Слишком большая длина запроса или слишком много условий
+- 429	Слишком много запросов в секунду или новых соединений в минуту
+- 5xx	Произошла внутренняя ошибка сервиса
 
 ### Термины
 - **Объект** - определение из ООП. Объект сущность, которая имеет набор свойств объекта и функций - поведение объекта. 
@@ -326,6 +344,7 @@ pm.test("response must be valid and have a body", function () {
 - `pm.expect(pm.response.code).to.be.at.most(200)` - ожидаемое значение меньше либо равно 200
 - `pm.expect(pm.response.code).to.be.above(199)` - проверить, что код ответа больше 199
 - `pm.expect(pm.response.code).to.be.below(201)` - проверить, что код ответа меньше 201
+- `pm.expect(pm.response.array).to.be.empty` - проверить, что массив array пустой
 - `pm.expect(pm.response.code).to.be.within(200, 205)` - ожидаемое значение должно быть в диапазоне от 200 до 205
 - `pm.expect(pm.response.code).to.be.closeTo(202, 1)` - ожидаемый ответ в диапазоне от 201 до 203
 - `pm.expect(pm.response.code).to.match(/^200/)` - сравнение с использованием регулярных выражений
@@ -619,7 +638,7 @@ pm.test("to.include", function () {
 // вхождение объекта в json ответ
 ```
 ## iclude vs deep.include
-**include** - вхождение элемента, используется для простой строки
+**include** - вхождение элемента, используется для простой строки/массива, т.е. полученного на первом уровне вложенности
 
 **deep.include** - вхождение элемента или дочернего объекта, если хотим залезть на уровень ниже по дереву ответа, при тестировании дочерених объектов будет срабатывать только `deep.include`
 
@@ -781,3 +800,204 @@ pm.expect([1, 2]).to.be.an.instanceof(Array);
 ```
 
 ## Тесты на массивы
+Проверки на существование массива
+- pm.expect(jsonData.companys).to.not.be.null;
+- pm.expect(jsonData.companys).to.not.be.empty;
+- pm.expect(jsonData.companys).to.not.be.exist; // Не рекомендуется использовать
+
+### Использование to.be.a('array')
+Проверка, что элемент ответа является массивом
+```js
+var jsonData = pm.response.json();
+
+pm.test("companys - это массив", function () {
+    pm.expect(jsonData.companys).to.be.a('array');
+});
+```
+
+Проверить что массив пустой/ не пустой
+```js
+pm.test("Проверить, что массив пустой", function () {
+    pm.expect(jsonData.companys).to.be.a('array').that.is.empty;
+});
+
+pm.test("Проверить, что массив не пустой", function () {
+    pm.expect(jsonData.companys).to.be.a('array').that.is.not.empty;
+});
+```
+Проверить наличие элемента внутри массива
+```js
+pm.test("Проверить, что массив не включает в себя элемент", function () {
+    pm.expect(jsonData.companys).to.be.a('array').that.deep.include({
+            "name": "Ромашка",
+            "id_company": 7
+        });
+});
+```
+### Использование .instanceof
+```js
+pm.test("companys - это массив, проверка с помощью .instanceof", function () {
+    pm.expect(jsonData.companys).to.be.an.instanceof(Array);
+});
+```
+### Использование to.have.all.keys
+Проверка ключей - to.have.all.keys
+```js
+pm.test("Проверка ключей - to.have.all.keys", function () {
+    pm.expect({a: 1, b: 2}).to.have.all.keys('a', 'b');
+});
+```
+Массив имеет все 3 элемента
+```js
+pm.test("Массив имеет 3 элемента", function () {
+    pm.expect(jsonData.companys).to.have.all.keys(0, 1, 2);
+});
+```
+### Использование to.have.any.keys
+Массив имеет хотя бы какой-либо элемент
+```js
+pm.test("Массив any.keys", function () {
+    pm.expect(jsonData.companys).to.have.any.keys(0, 1, 100);
+});
+```
+### Использование .members
+Массив имеет все ключи .members
+```js
+pm.test("Массив имеет все ключи .members", function () {
+    pm.expect([1, 2, 3]).to.have.members([2, 1, 3]);
+});
+
+pm.test("Массив имеет все ключи .members", function () {
+    pm.expect(["test", 2, 3]).to.have.members([2, 'test', 3]);
+});
+```
+Массив включает перечисленные элементы
+```js
+pm.test("Массив включает перечисленные элементы", function () {
+    pm.expect(["test", 2, 3]).to.include.members([2, 3]);
+});
+```
+Проверка реального массива
+```js
+pm.test("have.deep.members", function () {
+    pm.expect(jsonData.companys).to.have.deep.members([
+        {
+            "name": "Алкоголики и тунеядцы",
+            "id_company": 15
+        },
+        {
+            "name": "Петушки",
+            "id_company": 8
+        },
+        {
+            "name": "Ромашка",
+            "id_company": 7
+        }
+    ]);
+});
+```
+Проверка реального массива с учетом порядка
+```js
+pm.test("have.deep.members - с учетом порядка", function () {
+    pm.expect(jsonData.companys).to.have.deep.ordered.members([
+        {
+            "name": "Алкоголики и тунеядцы",
+            "id_company": 15
+        },
+        {
+            "name": "Петушки",
+            "id_company": 8
+        },
+        {
+            "name": "Ромашка",
+            "id_company": 7
+        }
+    ]);
+});
+```
+
+### Использование .lengtOf
+.lengtOf - проверка длины массива. .lengthOf can also be used as a language chain, causing all .above, .below, .least, .most, and .within
+```js
+pm.test("to.have.lengthOf == 3", function () {
+    pm.expect(jsonData.companys).to.have.lengthOf(3);
+});
+```
+ИНформация из оф документации
+```js
+// Recommended
+expect([1, 2, 3]).to.have.lengthOf(3);
+
+// Not recommended
+expect([1, 2, 3]).to.have.lengthOf.above(2);
+expect([1, 2, 3]).to.have.lengthOf.below(4);
+expect([1, 2, 3]).to.have.lengthOf.at.least(3);
+expect([1, 2, 3]).to.have.lengthOf.at.most(3);
+expect([1, 2, 3]).to.have.lengthOf.within(2,4);
+```
+
+## Строка в JSON
+- **Проверка типа данных**
+    - `pm.expect(jsonData.type).to.be.a('string');`
+- **Проверка данных**
+    - `pm.expect(jsonData.type).to.equal('error');`
+    - `pm.expect(jsonData.type).to.include('rr');`
+- **Проверка длины:**
+    - `pm.expect(jsonData.companys[0].name).to.have.lengthOf(33);`
+- **Проверка равенства:**
+    - `pm.expect(jsonData.message === "Успех!").to.be.ok;`
+    - `pm.expect(jsonData.message === "Успех!").to.be.true;`
+- **Проверка существования строки:**
+    - `pm.expect(jsonData.message).to.not.be.null;`
+    - `pm.expect(jsonData.message).to.not.be.empty;`
+    - `pm.expect(jsonData.message).to.not.exist;`
+
+## Число в JSON
+- **Проверка элемента, что он является числом**
+    - `pm.expect(jsonData.tasks[0].id_task).to.be.a('number');`
+- **Проверка равенства**
+    - `pm.expect(jsonData.tasks[0].id_task).to.equal(100);` !!! самый полезный тест для чисел в JSON
+- **Проверка вхождения**
+    - ~~`pm.expect(jsonData.tasks[0].id_task).to.include(99);`~~ include для чисел не работает 
+
+    - `pm.expect(jsonData.tasks[0].id_task).to.be.oneOf([201,200,202]);`
+    - `pm.expect(jsonData.tasks[0].id_task).to.be.below(210);`
+    - `pm.expect(jsonData.tasks[0].id_task).to.be.above(10);`
+    - `pm.expect(jsonData.tasks[0].id_task).to.at.least(210);`
+    - `pm.expect(jsonData.tasks[0].id_task).to.at.most(10);`
+    - `pm.expect(jsonData.tasks[0].id_task).to.at.within(1, 10);`
+
+    - `pm.expect(num === 33).to.be.ok;`
+    - `pm.expect(num === 33).to.be.true;`
+- **Проверка существования числа:**
+    - `pm.expect(jsonData.message).to.not.be.null;`
+    - ~~`pm.expect(jsonData.message).to.not.be.empty;`~~
+    - `pm.expect(jsonData.message).to.not.be.undefined;`
+    - `pm.expect(jsonData.message).to.not.be.NaN;`
+    - `pm.expect(jsonData.message).to.not.exist;`
+
+## Тесты на body: XML
+Чтобы достать значения из формата xml нужно его переконвертировать в json:
+```js
+var jsonObject = xml2Json(responseBody);
+// xml2Json - функция, которая преобразует xml в json
+// responseBody - Ответ от сервера в формате xml
+```
+Далее работаем аналогичным образом, как и с Json. НЕобходимо учесть, что при конвертации XML в JSON данные могут немного искажаться. Например при ответе сервера в Json для отсутствующих данных указывается `null`, в xml `""`
+
+## Тесты на заголовки
+Сниппет Response headers: Content-Type header check. Проверка наличия заголовка
+```js
+pm.test("Content-Type is present", function () {
+    pm.response.to.have.header("Content-Type");
+});
+// pm.response - ответ от сервера
+// to.have.header("Content-Type") - имеет заголовок "Content-Type"
+```
+
+Проверка наличия заголовка и его значени
+```js
+pm.test("Content-Type is present", function () {
+    pm.response.to.have.header("Content-Type", "application/json");
+});
+```
