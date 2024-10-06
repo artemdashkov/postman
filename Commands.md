@@ -33,9 +33,9 @@
 ### Методы
 - GET - используется для получения данных, retrieves data from an API. не имеет body.
 - POST - sends new data to an API. отправляет информацию на сервер, например картинку или текст, создает ресур по отправленным данным - например пользователя.
-- PUT - replace existing data.
+- PUT - replace existing data (заменяет полностью содержимое существующей сущнсоти). Если через PUT передадим не все поля, оставят непереданные поля null.
 - DELETE - delete existing data.
-- PATCH - update some existing data fields
+- PATCH - update some existing data fields (Обновляет некоторые поля)
 
 - Path-параметры: путь к ресурсу, является частью url, меняющася часть url, например id пользователя "any-site.com/users/15df4s"
 - query-параметры: фильтрации, перечисления свойств, тоже является частью url, но передается как параметр 
